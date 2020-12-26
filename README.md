@@ -1,2 +1,3 @@
-# subaddict
-A simple subscription manager
+# Trackr
+
+WIP
