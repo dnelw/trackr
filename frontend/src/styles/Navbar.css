@@ -1,0 +1,9 @@
+.navbar-nav {
+  width: 100%;
+  justify-content: space-between;
+}
+
+.navbar-nav-left {
+  display: flex;
+  flex-direction: row;
+}
