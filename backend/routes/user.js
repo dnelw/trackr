@@ -1,7 +1,23 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/user");
-const { generateSalt, hashPassword } = require("../common/crypto");
+const { generateSalt, hashPassword, issueJWT } = require("../common/crypto");
+const validateJWT = require("../middleware/jwt");
+
+router.get("/:username", validateJWT, (req, res) => {
+  const username = req.params.username;
+  if (req.user == username) {
+    User.findOne({ username }, ["-_id", "username"]).then((user) => {
+      if (user) {
+        res.json({ user });
+      } else {
+        res.status(404).json({ message: "User not found" });
+      }
+    });
+  } else {
+    res.status(403).json({ message: "Forbidden" });
+  }
+});
 
 router.post("/", (req, res) => {
   const { username, password } = req.body;
@@ -18,7 +34,8 @@ router.post("/", (req, res) => {
       user
         .save()
         .then(() => {
-          res.json({ message: "should send jwt here" });
+          const token = issueJWT(username);
+          res.json({ token });
           console.log(user);
         })
         .catch((err) => {

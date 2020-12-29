@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { login } from "../auth/authSlice";
+import axios from "axios";
 
 export const loginPageSlice = createSlice({
   name: "loginPage",
@@ -7,16 +8,20 @@ export const loginPageSlice = createSlice({
   reducers: {},
 });
 
-export const {} = loginPageSlice.actions;
+//export const {} = loginPageSlice.actions;
 
-// The function below is called a thunk and allows us to perform async logic. It
-// can be dispatched like a regular action: `dispatch(incrementAsync(10))`. This
-// will call the thunk with the `dispatch` function as the first argument. Async
-// code can then be executed and other actions can be dispatched
-export const sendLoginRequest = () => (dispatch) => {
-  setTimeout(() => {
-    dispatch(login());
-  }, 1000);
+export const sendLoginRequest = (username, password) => (dispatch) => {
+  axios
+    .post(process.env.REACT_APP_API_URI + "/auth/login", {
+      username,
+      password,
+    })
+    .then((res) => {
+      dispatch(login(res.data.token));
+    })
+    .catch((err) => {
+      console.log("Invalid credentials");
+    });
 };
 
 export default loginPageSlice.reducer;

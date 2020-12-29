@@ -1,4 +1,5 @@
 const crypto = require("crypto");
+const jwt = require("jsonwebtoken");
 
 const generateSalt = (length) => {
   return crypto
@@ -17,7 +18,12 @@ const hashPassword = (password, salt) => {
   };
 };
 
+const issueJWT = (user) => {
+  return jwt.sign({ user }, process.env.JWT_SECRET, { expiresIn: 1800 });
+};
+
 module.exports = {
   generateSalt,
   hashPassword,
+  issueJWT,
 };
