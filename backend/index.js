@@ -1,6 +1,8 @@
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const mongoose = require("mongoose");
 
 const app = express();
 const port = process.env.TRACKR_API_PORT || 5000;
@@ -11,7 +13,20 @@ app.use(bodyParser.json());
 
 const helloworldRouter = require("./routes/helloworld");
 app.use("/", helloworldRouter);
+const userRouter = require("./routes/user");
+app.use("/user", userRouter);
+const authRouter = require("./routes/auth");
+app.use("/auth", authRouter);
 
-app.listen(port, () => {
-  console.log(`Listening on port ${port}`);
-});
+mongoose
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false,
+  })
+  .then(() => {
+    app.listen(port, () => {
+      console.log(`Listening on port ${port}`);
+    });
+  });
