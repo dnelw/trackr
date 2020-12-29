@@ -11,3 +11,4 @@ services:
       - "${TRACKR_API_PORT:-5000}:${TRACKR_API_PORT:-5000}"
     environment:
       TRACKR_API_PORT: "${TRACKR_API_PORT:-5000}"
+      MONGO_URI: "${MONGO_URI}"
