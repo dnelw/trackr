@@ -9,9 +9,24 @@ router.get("/:sub", jwtCheck, (req, res) => {
   if (requestSub !== claimSub) {
     res.status(403).json();
   } else {
-    User.findOne({ claimSub }, []).then((user) => {
+    User.findOne({ sub: claimSub }).then((user) => {
       if (!user) {
-        res.json({ message: "Create a user here if it doesnt exist!" });
+        const user = new User({
+          sub: claimSub,
+          weight: [],
+        });
+        user
+          .save()
+          .then((data) => {
+            res.json({
+              message: "Created a new user successfully",
+              user: data,
+            });
+          })
+          .catch((err) => {
+            res.status(500).json({ error: "Something went wrong!" });
+            console.log(err);
+          });
       } else {
         res.json({ user });
       }

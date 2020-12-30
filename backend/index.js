@@ -16,6 +16,8 @@ const helloworldRouter = require("./routes/helloworld");
 app.use("/", helloworldRouter);
 const userRouter = require("./routes/user");
 app.use("/user", userRouter);
+const weightRouter = require("./routes/weight");
+app.use("/weight", weightRouter);
 
 mongoose
   .connect(process.env.MONGO_URI, {

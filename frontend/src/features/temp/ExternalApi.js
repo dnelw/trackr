@@ -1,44 +1,16 @@
-import React, { useState } from "react";
+import React from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+import { callApi, callSecureApi } from "../../api/ExternalApi";
+import { getUser } from "../../api/User";
 
 const ExternalApi = () => {
-  const [message, setMessage] = useState("");
-  const serverUrl = process.env.REACT_APP_API_URI;
-
-  const { getAccessTokenSilently, getIdTokenClaims, user } = useAuth0();
-
-  const callApi = async () => {
-    try {
-      const response = await fetch(`${serverUrl}/`);
-
-      const responseData = await response.json();
-
-      setMessage(responseData.message);
-    } catch (error) {
-      setMessage(error.message);
-    }
-  };
-
-  const callSecureApi = async () => {
-    try {
-      const token = await getAccessTokenSilently();
-      const { sub } = user;
-      const response = await fetch(`${serverUrl}/user/${sub}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const responseData = await response.json();
-
-      setMessage(responseData.message);
-    } catch (error) {
-      setMessage(error.message);
-    }
-  };
-
-  getIdTokenClaims().then((data) => console.log(data));
-
+  const { getAccessTokenSilently, user } = useAuth0();
+  let token = null;
+  getAccessTokenSilently()
+    .then((t) => {
+      token = t;
+    })
+    .catch(() => {});
   return (
     <div className="container">
       <h1>External API</h1>
@@ -58,21 +30,11 @@ const ExternalApi = () => {
         <button
           type="button"
           className="btn btn-primary"
-          onClick={callSecureApi}
+          onClick={() => getUser(user, token)}
         >
           Get Protected Message
         </button>
       </div>
-      {message && (
-        <div className="mt-5">
-          <h6 className="muted">Result</h6>
-          <div className="container-fluid">
-            <div className="row">
-              <code className="col-12 text-light bg-dark p-4">{message}</code>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

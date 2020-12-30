@@ -1,23 +1,18 @@
 const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema(
-  {
-    username: {
-      type: String,
-      unique: true,
-      required: true,
-    },
-    password: {
-      type: String,
-      required: true,
-    },
-    salt: {
-      type: String,
-      required: true,
-    },
+const userSchema = new mongoose.Schema({
+  sub: {
+    type: String,
+    unique: true,
+    required: true,
   },
-  { timestamps: true }
-);
+  weight: [
+    {
+      date: Date,
+      weight: Number,
+    },
+  ],
+});
 
 const User = mongoose.model("User", userSchema);
 

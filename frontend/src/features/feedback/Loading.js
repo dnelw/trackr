@@ -1,12 +1,11 @@
 import React from "react";
-const loadingImg =
-  "https://cdn.auth0.com/blog/auth0-react-sample/assets/loading.svg";
+import { Spin } from "antd";
 
 class Loading extends React.Component {
   render() {
     return (
       <div className="spinner">
-        <img src={loadingImg} alt="Loading..." />
+        <Spin size="large" />
       </div>
     );
   }
