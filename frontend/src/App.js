@@ -1,23 +1,28 @@
 import React from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { Switch, Route } from "react-router-dom";
 import "./styles/App.css";
-import PrivateRoute from "./features/routing/PrivateRoute";
-import LoginPage from "./features/loginPage/LoginPage";
+import NavBar from "./features/routing/NavBar";
+import { useAuth0 } from "@auth0/auth0-react";
+import Loading from "./features/feedback/Loading";
+import Dashboard from "./features/dashboard/Dashboard";
+import ProtectedRoute from "./features/routing/ProtectedRoute";
+import ExternalApi from "./features/temp/ExternalApi";
 
 function App() {
+  const { isLoading } = useAuth0();
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
   return (
-    <Router>
-      <div className="App">
-        <Switch>
-          <Route path="/login" exact>
-            <LoginPage />
-          </Route>
-          <PrivateRoute path="/" exact>
-            Protected Page
-          </PrivateRoute>
-        </Switch>
-      </div>
-    </Router>
+    <div className="App">
+      <NavBar />
+      <Switch>
+        <Route path="/external-api" exact component={ExternalApi} />
+        <ProtectedRoute path="/" exact component={Dashboard} />
+      </Switch>
+    </div>
   );
 }
 
