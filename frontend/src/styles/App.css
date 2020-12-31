@@ -1,6 +1,10 @@
 @import "./LoginPage.css";
 @import "./Spinner.css";
+@import "./WeightTrackr.css";
+@import "./NavBar.css";
 .App {
   height: 100%;
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }

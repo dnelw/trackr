@@ -1,6 +1,6 @@
 import React from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { callApi, callSecureApi } from "../../api/ExternalApi";
+import { callApi } from "../../api/ExternalApi";
 import { getUser } from "../../api/User";
 
 const ExternalApi = () => {
