@@ -1,21 +1,37 @@
 import React from "react";
 
 import { Breadcrumb } from "antd";
+import {
+  HomeOutlined,
+  RedoOutlined,
+  TabletOutlined,
+  UserAddOutlined,
+  UserDeleteOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import { useAuth0 } from "@auth0/auth0-react";
+import { NavLink } from "react-router-dom";
 
-const NavBar = () => {
+export const NavBar = () => {
   const { logout, isAuthenticated, loginWithRedirect } = useAuth0();
   return (
     <Breadcrumb className="nav-container">
       {isAuthenticated ? (
         <>
           <Breadcrumb.Item>
-            <a href="/weight">Weight Trackr</a>
+            <HomeOutlined />
+            <NavLink to="/">Home</NavLink>
           </Breadcrumb.Item>
           <Breadcrumb.Item>
-            <a href="/habits">Habits Trackr</a>
+            <TabletOutlined />
+            <NavLink to="/weight">Weight Trackr</NavLink>
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>
+            <RedoOutlined />
+            <NavLink to="/habits">Habits Trackr</NavLink>
           </Breadcrumb.Item>
           <Breadcrumb.Item onClick={logout}>
+            <UserDeleteOutlined />
             <button onClick={logout} className="link-button">
               Logout
             </button>
@@ -24,6 +40,7 @@ const NavBar = () => {
       ) : (
         <>
           <Breadcrumb.Item>
+            <UserAddOutlined />
             <button
               onClick={() => loginWithRedirect({ screen_hint: "signup" })}
               className="link-button"
@@ -32,6 +49,7 @@ const NavBar = () => {
             </button>
           </Breadcrumb.Item>
           <Breadcrumb.Item>
+            <UserOutlined />
             <button onClick={loginWithRedirect} className="link-button">
               Login
             </button>
@@ -41,5 +59,3 @@ const NavBar = () => {
     </Breadcrumb>
   );
 };
-
-export default NavBar;

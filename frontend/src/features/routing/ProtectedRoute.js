@@ -1,9 +1,9 @@
 import React from "react";
 import { Route } from "react-router-dom";
 import { withAuthenticationRequired } from "@auth0/auth0-react";
-import Loading from "../feedback/Loading";
+import { Loading } from "../feedback/Loading";
 
-const ProtectedRoute = ({ component, ...args }) => (
+export const ProtectedRoute = ({ component, ...args }) => (
   <Route
     component={withAuthenticationRequired(component, {
       onRedirecting: () => <Loading />,
@@ -11,5 +11,3 @@ const ProtectedRoute = ({ component, ...args }) => (
     {...args}
   />
 );
-
-export default ProtectedRoute;

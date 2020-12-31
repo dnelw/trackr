@@ -3,7 +3,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { callApi } from "../../api/ExternalApi";
 import { getUser } from "../../api/User";
 
-const ExternalApi = () => {
+export const ExternalApi = () => {
   const { getAccessTokenSilently, user } = useAuth0();
   let token = null;
   getAccessTokenSilently()
@@ -38,5 +38,3 @@ const ExternalApi = () => {
     </div>
   );
 };
-
-export default ExternalApi;

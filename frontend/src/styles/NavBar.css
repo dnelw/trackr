@@ -6,6 +6,9 @@
   justify-content: center;
   height: 5%;
 }
+.nav-container svg {
+  color: gray;
+}
 
 .link-button {
   color: gray;
@@ -15,9 +18,10 @@
   display: inline;
   margin: 0;
   padding: 0;
+  outline: none;
 }
 
 .link-button:hover,
 .link-button:focus {
-  text-decoration: none;
+  text-decoration: underline;
 }

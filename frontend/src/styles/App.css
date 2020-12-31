@@ -2,6 +2,7 @@
 @import "./Spinner.css";
 @import "./WeightTrackr.css";
 @import "./NavBar.css";
+@import "./Homepage.css";
 .App {
   height: 100%;
   width: 100%;
