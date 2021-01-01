@@ -8,8 +8,14 @@ const userSchema = new mongoose.Schema({
   },
   weight: [
     {
-      date: Date,
-      weight: Number,
+      date: {
+        type: Date,
+        required: true,
+      },
+      weight: {
+        type: Number,
+        required: true,
+      },
     },
   ],
 });

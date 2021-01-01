@@ -32,6 +32,16 @@ export const weightTrackrSlice = createSlice({
         return entry.date !== action.payload.date;
       });
     },
+    modifyRecord: (state, action) => {
+      state.weight = state.weight.map((entry) => {
+        if (entry.date === action.payload.date) {
+          return {
+            date: entry.date,
+            weight: action.payload.weight,
+          };
+        }
+      });
+    },
     toggleEntryModal: (state) => {
       state.showAddEntryModal = !state.showAddEntryModal;
     },
@@ -74,6 +84,7 @@ export const {
   setNotification,
   showNotification,
   closeNotification,
+  modifyRecord,
 } = weightTrackrSlice.actions;
 
 // The function below is called a thunk and allows us to perform async logic. It
