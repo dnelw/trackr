@@ -7,22 +7,21 @@
   height: 10%;
 }
 
-.nav-container svg {
+.ant-breadcrumb-link {
   color: gray;
 }
 
+.ant-breadcrumb-link:hover {
+  color: #1890ff;
+}
+
 .link-button {
-  color: gray;
   background-color: transparent;
   border: none;
   cursor: pointer;
   display: inline;
   margin: 0;
+  margin-left: 4px;
   padding: 0;
   outline: none;
-}
-
-.link-button:hover,
-.link-button:focus {
-  text-decoration: underline;
 }

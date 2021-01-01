@@ -42,19 +42,25 @@ router.delete("/:sub", jwtCheck, (req, res) => {
       if (!user) {
         res.status(404).json();
       } else {
+        const lenBefore = user.weight.length;
         user.weight = user.weight.filter((entry) => {
           return entry.date.getTime() !== new Date(req.body.date).getTime();
         });
-        user
-          .save()
-          .then((_) => {
-            res.json({ message: "Entry deleted successfully" });
-          })
-          .catch((err) => {
-            res
-              .status(500)
-              .json({ error: "There was an error saving your entry" });
-          });
+        const lenAfter = user.weight.length;
+        if (lenBefore === lenAfter + 1) {
+          user
+            .save()
+            .then((_) => {
+              res.json({ message: "Entry deleted successfully" });
+            })
+            .catch((err) => {
+              res
+                .status(500)
+                .json({ error: "There was an error saving your entry" });
+            });
+        } else {
+          res.status(404).json({ error: "Entry not found" });
+        }
       }
     });
   }

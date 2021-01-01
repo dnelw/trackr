@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { getUser } from "../../api/User";
-import { addWeightEntryCall } from "../../api/Weight";
+import { addWeightEntryCall, deleteWeightEntryCall } from "../../api/Weight";
 
 export const weightTrackrSlice = createSlice({
   name: "weightTrackr",
@@ -8,7 +8,11 @@ export const weightTrackrSlice = createSlice({
     loading: true,
     weight: [],
     showAddEntryModal: false,
-    failedAdding: false,
+    showNotification: false,
+    notificationType: "error",
+    notificationMessage: "Unknown Error",
+    notificationDescription: "An unknown error occured",
+    isShowDeleteModal: false,
   },
   reducers: {
     initRecords: (state, action) => {
@@ -25,7 +29,7 @@ export const weightTrackrSlice = createSlice({
     },
     deleteRecord: (state, action) => {
       state.weight = state.weight.filter((entry) => {
-        return entry.date !== action.payload;
+        return entry.date !== action.payload.date;
       });
     },
     toggleEntryModal: (state) => {
@@ -37,11 +41,23 @@ export const weightTrackrSlice = createSlice({
     setNotLoading: (state) => {
       state.loading = false;
     },
-    showFailedAddingNotification: (state) => {
-      state.failedAdding = true;
+    showNotification: (state) => {
+      state.showNotification = true;
     },
-    closeFailedAddingNotification: (state) => {
-      state.failedAdding = false;
+    closeNotification: (state) => {
+      state.showNotification = false;
+    },
+    setNotification: (state, action) => {
+      const { type, message, description } = action.payload;
+      state.notificationDescription = description;
+      state.notificationMessage = message;
+      state.notificationType = type;
+    },
+    showDeleteModal: (state) => {
+      state.isShowDeleteModal = true;
+    },
+    closeDeleteModal: (state) => {
+      state.isShowDeleteModal = false;
     },
   },
 });
@@ -53,8 +69,11 @@ export const {
   toggleEntryModal,
   setLoading,
   setNotLoading,
-  showFailedAddingNotification,
-  closeFailedAddingNotification,
+  showDeleteModal,
+  closeDeleteModal,
+  setNotification,
+  showNotification,
+  closeNotification,
 } = weightTrackrSlice.actions;
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -62,11 +81,24 @@ export const {
 // will call the thunk with the `dispatch` function as the first argument. Async
 // code can then be executed and other actions can be dispatched
 export const getUserWeightData = (user, token) => (dispatch) => {
-  getUser(user, token).then((data) => {
-    if (data) {
-      dispatch(initRecords(data.data.user.weight));
-    }
-  });
+  getUser(user, token)
+    .then((data) => {
+      if (data) {
+        dispatch(initRecords(data.data.user.weight));
+      }
+    })
+    .catch((err) => {
+      dispatch(
+        setNotification({
+          type: "error",
+          message: "Failed to get trackr data",
+          description: "Something went wrong on our end!",
+        })
+      );
+      dispatch(showNotification());
+      dispatch(setNotLoading());
+      setTimeout(() => dispatch(closeNotification()), 1000);
+    });
 };
 
 export const addWeightEntry = (user, token, date, weight) => (dispatch) => {
@@ -86,9 +118,45 @@ export const addWeightEntry = (user, token, date, weight) => (dispatch) => {
       }
     })
     .catch((err) => {
-      dispatch(showFailedAddingNotification());
+      dispatch(
+        setNotification({
+          type: "error",
+          message: "Failed to add entry",
+          description: "Something went wrong on our end!",
+        })
+      );
+      dispatch(showNotification());
       dispatch(setNotLoading());
-      setTimeout(() => dispatch(closeFailedAddingNotification()), 1000);
+      setTimeout(() => dispatch(closeNotification()), 100);
+    });
+};
+
+export const deleteWeightEntry = (user, token, date) => (dispatch) => {
+  dispatch(setLoading());
+  const formattedDate = new Date(date).toISOString().split("T")[0];
+  deleteWeightEntryCall(user, token, date)
+    .then((data) => {
+      if (data.status === 200) {
+        dispatch(closeDeleteModal());
+        dispatch(
+          deleteRecord({
+            date: formattedDate,
+          })
+        );
+        dispatch(setNotLoading());
+      }
+    })
+    .catch((err) => {
+      dispatch(
+        setNotification({
+          type: "error",
+          message: "Failed to delete entry",
+          description: "Something went wrong on our end!",
+        })
+      );
+      dispatch(showNotification());
+      dispatch(setNotLoading());
+      setTimeout(() => dispatch(closeNotification()), 100);
     });
 };
 
@@ -99,5 +167,14 @@ export const selectWeight = (state) => state.weightTrackr.weight;
 export const selectShowAddEntryModal = (state) =>
   state.weightTrackr.showAddEntryModal;
 export const selectIsLoading = (state) => state.weightTrackr.loading;
-export const selectFailedAdding = (state) => state.weightTrackr.failedAdding;
+export const selectIsShowDeleteModal = (state) =>
+  state.weightTrackr.isShowDeleteModal;
+export const selectNotificationType = (state) =>
+  state.weightTrackr.notificationType;
+export const selectNotificationDescription = (state) =>
+  state.weightTrackr.notificationDescription;
+export const selectNotificationMessage = (state) =>
+  state.weightTrackr.notificationMessage;
+export const selectShowNotification = (state) =>
+  state.weightTrackr.showNotification;
 export default weightTrackrSlice.reducer;
