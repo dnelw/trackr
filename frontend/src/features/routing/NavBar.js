@@ -30,9 +30,16 @@ export const NavBar = () => {
             <RedoOutlined />
             <NavLink to="/habits">Habits Trackr</NavLink>
           </Breadcrumb.Item>
-          <Breadcrumb.Item onClick={logout}>
+          <Breadcrumb.Item>
             <UserDeleteOutlined />
-            <button onClick={logout} className="link-button">
+            <button
+              onClick={() =>
+                logout({
+                  returnTo: window.location.origin,
+                })
+              }
+              className="link-button"
+            >
               Logout
             </button>
           </Breadcrumb.Item>

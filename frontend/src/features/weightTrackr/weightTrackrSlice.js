@@ -1,11 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { getUser } from "../../api/User";
-import { addWeightEntryCall, deleteWeightEntryCall } from "../../api/Weight";
+import {
+  addWeightEntryCall,
+  deleteWeightEntryCall,
+  modifyWeightEntryCall,
+} from "../../api/Weight";
 
 export const weightTrackrSlice = createSlice({
   name: "weightTrackr",
   initialState: {
-    loading: true,
+    saveLoading: false,
+    deleteLoading: false,
+    addLoading: false,
     weight: [],
     showAddEntryModal: false,
     showNotification: false,
@@ -39,17 +45,22 @@ export const weightTrackrSlice = createSlice({
             date: entry.date,
             weight: action.payload.weight,
           };
+        } else {
+          return entry;
         }
       });
     },
     toggleEntryModal: (state) => {
       state.showAddEntryModal = !state.showAddEntryModal;
     },
-    setLoading: (state) => {
-      state.loading = true;
+    setAddLoading: (state, action) => {
+      state.addLoading = action.payload;
     },
-    setNotLoading: (state) => {
-      state.loading = false;
+    setSaveLoading: (state, action) => {
+      state.saveLoading = action.payload;
+    },
+    setDeleteLoading: (state, action) => {
+      state.deleteLoading = action.payload;
     },
     showNotification: (state) => {
       state.showNotification = true;
@@ -77,8 +88,9 @@ export const {
   deleteRecord,
   initRecords,
   toggleEntryModal,
-  setLoading,
-  setNotLoading,
+  setAddLoading,
+  setDeleteLoading,
+  setSaveLoading,
   showDeleteModal,
   closeDeleteModal,
   setNotification,
@@ -107,13 +119,12 @@ export const getUserWeightData = (user, token) => (dispatch) => {
         })
       );
       dispatch(showNotification());
-      dispatch(setNotLoading());
       setTimeout(() => dispatch(closeNotification()), 1000);
     });
 };
 
 export const addWeightEntry = (user, token, date, weight) => (dispatch) => {
-  dispatch(setLoading());
+  dispatch(setAddLoading(true));
   const formattedDate = new Date(date).toISOString().split("T")[0];
   addWeightEntryCall(user, token, date, weight)
     .then((data) => {
@@ -125,7 +136,7 @@ export const addWeightEntry = (user, token, date, weight) => (dispatch) => {
             weight,
           })
         );
-        dispatch(setNotLoading());
+        dispatch(setAddLoading(false));
       }
     })
     .catch((err) => {
@@ -137,13 +148,13 @@ export const addWeightEntry = (user, token, date, weight) => (dispatch) => {
         })
       );
       dispatch(showNotification());
-      dispatch(setNotLoading());
+      dispatch(setAddLoading(false));
       setTimeout(() => dispatch(closeNotification()), 100);
     });
 };
 
 export const deleteWeightEntry = (user, token, date) => (dispatch) => {
-  dispatch(setLoading());
+  dispatch(setDeleteLoading(true));
   const formattedDate = new Date(date).toISOString().split("T")[0];
   deleteWeightEntryCall(user, token, date)
     .then((data) => {
@@ -154,7 +165,7 @@ export const deleteWeightEntry = (user, token, date) => (dispatch) => {
             date: formattedDate,
           })
         );
-        dispatch(setNotLoading());
+        dispatch(setDeleteLoading(false));
       }
     })
     .catch((err) => {
@@ -166,7 +177,37 @@ export const deleteWeightEntry = (user, token, date) => (dispatch) => {
         })
       );
       dispatch(showNotification());
-      dispatch(setNotLoading());
+      dispatch(setDeleteLoading(false));
+      setTimeout(() => dispatch(closeNotification()), 100);
+    });
+};
+
+export const modifyWeightEntry = (user, token, date, weight) => (dispatch) => {
+  dispatch(setSaveLoading(true));
+  const formattedDate = new Date(date).toISOString().split("T")[0];
+  modifyWeightEntryCall(user, token, date, weight)
+    .then((data) => {
+      if (data.status === 200) {
+        dispatch(closeDeleteModal());
+        dispatch(
+          modifyRecord({
+            date: formattedDate,
+            weight,
+          })
+        );
+        dispatch(setSaveLoading(false));
+      }
+    })
+    .catch((err) => {
+      dispatch(
+        setNotification({
+          type: "error",
+          message: "Failed to modify entry",
+          description: "Something went wrong on our end!",
+        })
+      );
+      dispatch(showNotification());
+      dispatch(setSaveLoading(false));
       setTimeout(() => dispatch(closeNotification()), 100);
     });
 };
@@ -177,7 +218,9 @@ export const deleteWeightEntry = (user, token, date) => (dispatch) => {
 export const selectWeight = (state) => state.weightTrackr.weight;
 export const selectShowAddEntryModal = (state) =>
   state.weightTrackr.showAddEntryModal;
-export const selectIsLoading = (state) => state.weightTrackr.loading;
+export const selectSaveLoading = (state) => state.weightTrackr.saveLoading;
+export const selectDeleteLoading = (state) => state.weightTrackr.deleteLoading;
+export const selectAddLoading = (state) => state.weightTrackr.addLoading;
 export const selectIsShowDeleteModal = (state) =>
   state.weightTrackr.isShowDeleteModal;
 export const selectNotificationType = (state) =>

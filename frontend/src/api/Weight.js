@@ -20,3 +20,14 @@ export const deleteWeightEntryCall = async (user, token, date) => {
     });
   }
 };
+
+export const modifyWeightEntryCall = async (user, token, date, weight) => {
+  const axios = getAuthorizedAxios(token);
+  if (user && token) {
+    const { sub } = user;
+    return axios.put(`/weight/${sub}`, {
+      date,
+      weight,
+    });
+  }
+};
