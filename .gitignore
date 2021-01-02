@@ -1,1 +1,5 @@
 scripts
+node_modules/
+.env
+.env.production
+frontend/.eslintcache

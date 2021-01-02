@@ -3,11 +3,11 @@ services:
     build: ./frontend
     ports:
       - "${TRACKR_PORT:-8080}:${TRACKR_PORT:-8080}"
-    environment:
-      TRACKR_PORT: "${TRACKR_PORT:-8080}"
+    env_file:
+      - ./frontend/.env.production
   backend:
     build: ./backend
     ports:
-      - "${TRACKR_API_PORT:-5000}:${TRACKR_API_PORT:-5000}"
-    environment:
-      TRACKR_API_PORT: "${TRACKR_API_PORT:-5000}"
+      - "${TRACKR_API_PORT:-8079}:${TRACKR_API_PORT:-8079}"
+    env_file:
+      - ./backend/.env.production
