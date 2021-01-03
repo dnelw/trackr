@@ -70,6 +70,9 @@ const formatData = (weightData, dataPeriod) => {
     sortedWeightData = sortedWeightData.filter((entry) => {
       return moment(entry.date) >= start;
     });
+    if (sortedWeightData.length === 0) {
+      return [];
+    }
     start = moment.max(start, moment(sortedWeightData[0].date));
   }
   while (start <= end) {
