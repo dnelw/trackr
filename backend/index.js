@@ -18,6 +18,8 @@ const userRouter = require("./routes/user");
 app.use("/user", userRouter);
 const weightRouter = require("./routes/weight");
 app.use("/weight", weightRouter);
+const habitsRouter = require("./routes/habits");
+app.use("/habits", habitsRouter);
 
 mongoose
   .connect(process.env.MONGO_URI, {
